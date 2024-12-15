@@ -1,15 +1,21 @@
 "use client";
-import React, { FC } from "react";
+import React, { FC, useEffect } from "react";
 import { TTodoItem } from "../../../types";
 import Todo from "./Todo.component";
 import { useModalContext } from "@/contexts/Modal.context";
+import { useTodoContext } from "@/contexts/Todos.context";
 
 const TodoSection: FC<{ todos: TTodoItem[] }> = ({ todos }) => {
   const { openModal } = useModalContext();
+  const { fillTodos, todos: todos_state } = useTodoContext();
+
+  useEffect(() => {
+    fillTodos(todos);
+  }, []);
 
   return (
     <section className="flex gap-4 flex-wrap">
-      {todos.map((todo) => (
+      {todos_state.map((todo) => (
         <Todo todo={todo} key={todo.id} />
       ))}
       {/* Add Todo */}

@@ -1,13 +1,26 @@
 "use client";
 import { useModalContext } from "@/contexts/Modal.context";
-import { Button, Dialog, DialogTitle, TextField } from "@mui/material";
+import {
+  Alert,
+  Button,
+  CircularProgress,
+  Dialog,
+  DialogTitle,
+  Snackbar,
+  TextField,
+} from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { TTodoItem } from "../../../types";
 import Image from "next/image";
 import add_todo from "../actions/AddTodo.action";
+import useFetch from "@/hooks/useFetch.hook";
+import { useTodoContext } from "@/contexts/Todos.context";
 
 const AddItem = () => {
   const { open, closeModal } = useModalContext();
+  const { addTodo } = useTodoContext();
+  const { display_loading, display_error, display_success, ...add_state } =
+    useFetch();
   const [form_state, setFormState] = useState<TTodoItem<"post">>({
     title: "",
     completed: false,
@@ -37,9 +50,26 @@ const AddItem = () => {
   const handleFormSubmit: React.FormEventHandler<HTMLFormElement> = async (
     e
   ) => {
-    e.preventDefault();
+    try {
+      e.preventDefault();
 
-    await add_todo(form_state);
+      display_loading();
+
+      await add_todo(form_state);
+
+      display_success("Todo added successfully");
+
+      addTodo({
+        ...form_state,
+        ...(form_state.coverImage
+          ? { coverImage: URL.createObjectURL(form_state.coverImage as Blob) }
+          : {}),
+      });
+
+      closeModal();
+    } catch (error: any) {
+      display_error(error.message || error);
+    }
   };
 
   useEffect(() => {
@@ -67,7 +97,7 @@ const AddItem = () => {
                 <Image
                   width={300}
                   height={200}
-                  src={URL.createObjectURL(form_state.coverImage)}
+                  src={URL.createObjectURL(form_state.coverImage as Blob)}
                   alt="Uploaded image"
                   className="w-full h-[200px] object-cover object-top"
                 />
@@ -119,10 +149,45 @@ const AddItem = () => {
             multiline
           />
           <div className="w-full flex justify-end">
-            <Button type="submit">Add Todo</Button>
+            <Button
+              type="submit"
+              className="flex justify-center items-center"
+              disabled={add_state.loading}
+            >
+              {add_state.loading ? (
+                <>
+                  <CircularProgress size={"1rem"} />
+                </>
+              ) : (
+                "Add Todo"
+              )}
+            </Button>
           </div>
         </form>
       </Dialog>
+      {add_state.error && (
+        <Snackbar
+          open={add_state.error ? true : false}
+          onClose={() => add_state.setError(undefined)}
+        >
+          <Alert color="error" onClose={() => add_state.setError(undefined)}>
+            {add_state.error}
+          </Alert>
+        </Snackbar>
+      )}
+      {add_state.success && (
+        <Snackbar
+          open={add_state.success ? true : false}
+          onClose={() => add_state.setSuccess(undefined)}
+        >
+          <Alert
+            color="success"
+            onClose={() => add_state.setSuccess(undefined)}
+          >
+            {add_state.success}
+          </Alert>
+        </Snackbar>
+      )}
     </>
   );
 };

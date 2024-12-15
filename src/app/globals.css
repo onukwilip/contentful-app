@@ -19,3 +19,34 @@ body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
 } */
+
+.radio {
+  position: relative;
+}
+
+.radio input[type="radio"] {
+  display: none; /* Hide the default radio button */
+}
+
+.radio .checkmark {
+  width: 20px; /* Size of the radio button */
+  height: 20px;
+  border: 2px solid gray; /* Gray border for unselected */
+  border-radius: 50%; /* Circular shape */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.radio input:checked + .checkmark {
+  border-color: transparent; /* Remove border when selected */
+  background-color: #00a7d9; /* Blue background for selected */
+  color: white !important; /* White color for the checkmark */
+}
+
+.radio input:checked + .checkmark::before {
+  content: "✔"; /* Checkmark symbol */
+  font-size: 12px;
+  color: white !important;
+}

@@ -8,7 +8,7 @@ export type TTodoItem<T extends "get" | "post" = "get"> = {
   id?: string;
   title: string;
   description: string;
-  coverImage?: T extends "get" ? TTodoItemCoverImage : File;
+  coverImage?: T extends "get" ? TTodoItemCoverImage : File | string;
   completed: boolean;
 };
 

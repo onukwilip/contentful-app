@@ -1,4 +1,3 @@
-import Image from "next/image";
 import TodoSection from "./_components/TodoSection.component";
 import client from "./config/contentful-client.config";
 import { TTodoItem } from "../../types";

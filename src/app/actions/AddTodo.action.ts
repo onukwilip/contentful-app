@@ -7,8 +7,6 @@ import client from "../config/contentful-mgt-client.config";
 import { buffer } from "stream/consumers";
 
 const add_todo = async (todo: TTodoItem<"post">) => {
-  //   Object.entries(todo).map(([key, val]) => console.log(`TODO ${key}`, val));
-
   try {
     // Get the space
     const space = await client.getSpace(process.env.CONTENTFUL_SPACE_ID || ""); // Replace with your space ID
@@ -17,9 +15,8 @@ const add_todo = async (todo: TTodoItem<"post">) => {
     const environment = await space.getEnvironment("master");
     let publishedAsset: Asset | undefined = undefined;
 
-    if (todo.coverImage) {
+    if (typeof todo.coverImage !== "string" && todo.coverImage) {
       const array_buffer = await todo.coverImage.arrayBuffer();
-      //   const cover_image_buffer = Buffer.from(array_buffer);
 
       // Step 1: Upload the file
       const upload = await environment.createUpload({
@@ -53,8 +50,15 @@ const add_todo = async (todo: TTodoItem<"post">) => {
         },
       });
 
+      // Start and wait for processing in a single line
+      await asset.processForAllLocales();
+      console.log("Asset processing completed!");
+
+      // Refetch the asset to get the latest version
+      const new_asset = await environment.getAsset(asset.sys.id);
+
       // Publish the asset after creating it
-      publishedAsset = await asset.publish();
+      publishedAsset = await new_asset.publish();
 
       console.log("Asset published successfully:", publishedAsset.sys.id);
     }
@@ -82,11 +86,14 @@ const add_todo = async (todo: TTodoItem<"post">) => {
               },
             }
           : {}),
-        booleanField: {
+        completed: {
           "en-US": false, // Set the completed value to false
         },
       },
     });
+
+    // Publish the entry to Contentful
+    await entry.publish();
 
     console.log("Entry created successfully:", entry.sys.id);
   } catch (error: any) {
