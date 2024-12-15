@@ -4,6 +4,7 @@ import { TTodoItem } from "../../../types";
 import Todo from "./Todo.component";
 import { useModalContext } from "@/contexts/Modal.context";
 import { useTodoContext } from "@/contexts/Todos.context";
+import { sort_todos } from "@/utils";
 
 const TodoSection: FC<{ todos: TTodoItem[] }> = ({ todos }) => {
   const { openModal } = useModalContext();
@@ -14,7 +15,7 @@ const TodoSection: FC<{ todos: TTodoItem[] }> = ({ todos }) => {
   }, []);
 
   return (
-    <section className="flex gap-4 justify-center flex-wrap">
+    <section className="flex gap-4 justify-center flex-wrap transition">
       {/* Add Todo */}
       <div
         className="p-4 rounded-md shadow-md flex flex-col items-center justify-center gap-4 w-[230px] cursor-pointer transition hover:scale-105"
@@ -23,7 +24,7 @@ const TodoSection: FC<{ todos: TTodoItem[] }> = ({ todos }) => {
         <i className="fas fa-plus text-6xl"></i>
         <span className="text-2xl">Add todo</span>
       </div>
-      {todos_state.map((todo) => (
+      {todos_state.sort(sort_todos).map((todo) => (
         <Todo todo={todo} key={todo.id} />
       ))}
     </section>

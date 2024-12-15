@@ -56,7 +56,7 @@ const Todo: FC<{ todo: TTodoItem }> = ({ todo }) => {
   console.log("Todo", todo);
 
   return (
-    <div className="relative p-4 rounded-md shadow-md flex flex-col w-fit">
+    <div className="relative transition p-4 rounded-md shadow-md flex flex-col w-fit">
       <div className="absolute right-3 top-1 flex gap-2 rounded-full p-2 bg-white shadow-md">
         {/* Delete icon */}
         {delete_state.loading ? (
