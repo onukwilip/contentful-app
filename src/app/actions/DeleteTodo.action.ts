@@ -2,7 +2,7 @@
 import { TTodoItem } from "../../../types";
 import client from "../config/contentful-mgt-client.config";
 
-const toggle_todo_progress = async (todo: TTodoItem) => {
+const delete_todo = async (todo: TTodoItem) => {
   try {
     // Get the space
     const space = await client.getSpace(process.env.CONTENTFUL_SPACE_ID || ""); // Replace with your space ID
@@ -14,20 +14,19 @@ const toggle_todo_progress = async (todo: TTodoItem) => {
     const entry = await environment.getEntry(todo.id || "");
     console.log("Entry fetched successfully:", entry.sys.id);
 
-    // Step 2: Update the fields
-    entry.fields.completed["en-US"] = !todo.completed;
+    // Step 2: Unpublish the entry (if it's published)
+    if (entry.isPublished()) {
+      await entry.unpublish();
+      console.log("Entry unpublished successfully:", entry.sys.id);
+    }
 
-    // Step 3: Save the changes
-    const updatedEntry = await entry.update();
-    console.log("Entry updated successfully:", updatedEntry.sys.id);
-
-    // Step 4: Publish the entry (if needed)
-    const publishedEntry = await updatedEntry.publish();
-    console.log("Entry published successfully:", publishedEntry.sys.id);
+    // Step 3: Delete the entry
+    await entry.delete();
+    console.log("Entry deleted successfully:");
   } catch (error: any) {
-    console.error("Error updating the entry:", error);
+    console.error("Error deleting the entry:", error);
     throw new Error(error.message);
   }
 };
 
-export default toggle_todo_progress;
+export default delete_todo;

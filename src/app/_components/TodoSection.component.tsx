@@ -14,10 +14,7 @@ const TodoSection: FC<{ todos: TTodoItem[] }> = ({ todos }) => {
   }, []);
 
   return (
-    <section className="flex gap-4 flex-wrap">
-      {todos_state.map((todo) => (
-        <Todo todo={todo} key={todo.id} />
-      ))}
+    <section className="flex gap-4 justify-center flex-wrap">
       {/* Add Todo */}
       <div
         className="p-4 rounded-md shadow-md flex flex-col items-center justify-center gap-4 w-[230px] cursor-pointer transition hover:scale-105"
@@ -26,6 +23,9 @@ const TodoSection: FC<{ todos: TTodoItem[] }> = ({ todos }) => {
         <i className="fas fa-plus text-6xl"></i>
         <span className="text-2xl">Add todo</span>
       </div>
+      {todos_state.map((todo) => (
+        <Todo todo={todo} key={todo.id} />
+      ))}
     </section>
   );
 };
