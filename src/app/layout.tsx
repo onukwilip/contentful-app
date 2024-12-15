@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import AddItem from "./_components/AddItem.component";
+import ModalContextProvider from "@/contexts/Modal.context";
+import TodoContextProvider from "@/contexts/Todos.context";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,10 +27,31 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link
+          rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"
+          integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ=="
+          {...{ crossOrigin: "anonymous", referrerPolicy: "no-referrer" }}
+        />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <TodoContextProvider>
+          <ModalContextProvider>
+            <main className="flex justify-center p-2 lg:p-8 text-black/70">
+              <section className="w-full max-w-[800px] p-8 rounded-xl bg-black/5">
+                {/* Title */}
+                <h1 className="text-3xl font-bold">Todos...</h1>
+                <br />
+                {children}
+              </section>
+            </main>
+            {/* Modal */}
+            <AddItem />
+          </ModalContextProvider>
+        </TodoContextProvider>
       </body>
     </html>
   );
